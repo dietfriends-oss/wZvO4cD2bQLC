@@ -13,9 +13,9 @@ blocks:
       prologue:
         commands:
           # Correct premissions since they are too open by default:
-          - chmod 0600 ~/.ssh/*
+          - chmod 0600 ~/.ssh/private-repo
           # Add the key to the ssh agent:
-          - ssh-add ~/.ssh/*
+          - ssh-add ~/.ssh/private-repo
           - git clone git@github.com:chatbot-pf/chatbot-mobile.git
       jobs:
         - name: 'Job #1'
