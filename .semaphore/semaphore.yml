@@ -9,7 +9,7 @@ blocks:
     task:
       # Connect secret to all jobs in the block
       secrets:
-        - name: private-repo-mac
+        - name: private-repo
       prologue:
         commands:
           # Correct premissions since they are too open by default:
