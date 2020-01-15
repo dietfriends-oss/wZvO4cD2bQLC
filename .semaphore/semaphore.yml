@@ -12,6 +12,11 @@ blocks:
         - name: private-repo
         - name: fastlane-env
         - name: firebase-env
+      env_vars:
+        - name: LC_ALL
+          value: en_US.UTF-8
+        - name: LANG
+          value: en_US.UTF-8
       prologue:
         commands:
           - chmod 0600 ~/.keys/*
