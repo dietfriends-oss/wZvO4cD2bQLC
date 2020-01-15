@@ -30,10 +30,11 @@ blocks:
           - >-
             sudo security delete-certificate -c "Apple Worldwide Developer
             Relations Certification Authority"
+          - cd ..
+          - xcversion select 11.2.1
       jobs:
         - name: Fastlane build
           commands:
-            - xcversion select 11.2.1
             - flutter pub get
             - cd ios
             - pod update && pod install && cd ..
