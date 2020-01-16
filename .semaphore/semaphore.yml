@@ -21,6 +21,10 @@ blocks:
         commands:
           - chmod 0600 ~/.keys/*
           - ssh-add ~/.keys/*
+          - checkout
+          - >-
+            export GIT_REF=$(git log --format=%B -n 1 | perl -nle'print $& while m{ref: \K\d+}g')
+          - echo "git ref - ${GIT_REF}"
           - git clone git@github.com:${GIT_OWNER}/${GIT_REPO}.git
           - cd ${GIT_REPO}/ios
           - rbenv shell 2.5.1
@@ -50,3 +54,34 @@ blocks:
             - gem install fastlane -NV
             - bundle exec fastlane install_plugins
             - bundle exec fastlane beta_dev service:SemaphoreCI upload:true
+      epilogue:
+        always:
+          commands:
+            - wget https://github.com/cloudposse/github-status-updater/releases/download/0.2.0/github-status-updater_darwin_amd64 -O github-status-updater
+            - chmod +x ./github-status-updater
+        on_pass:
+          commands:
+            - >-
+              ./github-status-updater
+              -action update_state
+              -token ${GITHUB_TOKEN}
+              -owner ${GIT_OWNER}
+              -repo ${GIT_REPO}
+              -ref ${GIT_REF}
+              -state success
+              -context "beta-ci"
+              -description "Commit status with target URL"
+              -url "https://i109euqw5usj.semaphoreci.com/workflows/${SEMAPHORE_WORKFLOW_ID}"
+        on_fail:
+          commands:
+            - >-
+              ./github-status-updater
+              -action update_state
+              -token ${GITHUB_TOKEN}
+              -owner ${GIT_OWNER}
+              -repo ${GIT_REPO}
+              -ref ${GIT_REF}
+              -state failure
+              -context "beta-ci"
+              -description "Commit status with target URL"
+              -url "https://i109euqw5usj.semaphoreci.com/workflows/${SEMAPHORE_WORKFLOW_ID}"
