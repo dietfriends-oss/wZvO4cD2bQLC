@@ -23,8 +23,20 @@ blocks:
           - ssh-add ~/.keys/*
           - checkout
           - >-
-            export GIT_REF=$(git log --format=%B -n 1 | perl -nle'print $& while m{ref: \K\d+}g')
+            export GIT_REF=$(git log --format=%B -n 1 | perl -nle'print $& while m{ref: \K[a-f0-9]+}g')
           - echo "git ref - ${GIT_REF}"
+          - chmod +x ./github-status-updater_darwin_amd64
+          - >-
+            ./github-status-updater_darwin_amd64
+            -action update_state
+            -token ${GITHUB_TOKEN}
+            -owner ${GIT_OWNER}
+            -repo ${GIT_REPO}
+            -ref ${GIT_REF}
+            -state pending
+            -context "beta-ci"
+            -description "Commit status with target URL"
+            -url "https://i109euqw5usj.semaphoreci.com/workflows/${SEMAPHORE_WORKFLOW_ID}"
           - git clone git@github.com:${GIT_OWNER}/${GIT_REPO}.git
           - cd ${GIT_REPO}/ios
           - rbenv shell 2.5.1
